@@ -8,6 +8,8 @@ use base64::prelude::*;
 use sha2::{Digest, Sha256};
 use x25519_dalek::{PublicKey, StaticSecret};
 
+use data_encoding::BASE64;
+use std::fs::File;
 /// Save bytes to file encoded as Base64.
 ///
 /// The data is encoded using the standard Base64 encoding engine and written to
@@ -24,6 +26,13 @@ use x25519_dalek::{PublicKey, StaticSecret};
 ///
 fn save_to_file_as_b64(file_name: &str, data: &[u8]) {
     // TODO
+    println!("the save to file is called");
+    let encoded_data = BASE64.encode(data);
+    if(!fs::exists(file_name)){
+        file_name = File::create(file_name)?;
+    }
+    file_name.write_all(encoded_data)?;
+    
     unimplemented!()
 }
 
@@ -114,61 +123,63 @@ fn main() {
 
     // Command parsing: keygen, encrypt, decrypt
     let cmd = &args[1];
-    if cmd == "keygen" {
-        // Arguments to the command
-        let secret_key = &args[2];
-        let public_key = &args[3];
+    // if cmd == "keygen" {
+    //     // Arguments to the command
+    //     let secret_key = &args[2];
+    //     let public_key = &args[3];
 
-        // Generate a secret and public key for this user
-        let (sk_bytes, pk_bytes) = keygen();
+    //     // Generate a secret and public key for this user
+    //     let (sk_bytes, pk_bytes) = keygen();
 
-        // Save those bytes as Base64 to file
-        save_to_file_as_b64(&secret_key, &sk_bytes);
-        save_to_file_as_b64(&public_key, &pk_bytes);
-    } else if cmd == "encrypt" {
-        // Arguments to the command
-        let input = &args[2];
-        let output = &args[3];
-        let sender_sk = &args[4];
-        let receiver_pk = &args[5];
+    //     // Save those bytes as Base64 to file
+    //     save_to_file_as_b64(&secret_key, &sk_bytes);
+    //     save_to_file_as_b64(&public_key, &pk_bytes);
+    // } else if cmd == "encrypt" {
+    //     // Arguments to the command
+    //     let input = &args[2];
+    //     let output = &args[3];
+    //     let sender_sk = &args[4];
+    //     let receiver_pk = &args[5];
 
-        // Read input from file
-        // Note that this input is not necessarily Base64-encoded
-        let input = fs::read(input).unwrap();
+    //     // Read input from file
+    //     // Note that this input is not necessarily Base64-encoded
+    //     let input = fs::read(input).unwrap();
 
-        // Read the base64-encoded secret and public keys from file
-        // Need to convert the Vec<u8> from this function into the 32-byte array for each key
-        let sender_sk: [u8; 32] = read_from_b64_file(sender_sk).try_into().unwrap();
-        let receiver_pk: [u8; 32] = read_from_b64_file(receiver_pk).try_into().unwrap();
+    //     // Read the base64-encoded secret and public keys from file
+    //     // Need to convert the Vec<u8> from this function into the 32-byte array for each key
+    //     let sender_sk: [u8; 32] = read_from_b64_file(sender_sk).try_into().unwrap();
+    //     let receiver_pk: [u8; 32] = read_from_b64_file(receiver_pk).try_into().unwrap();
 
-        // Call the encryption operation
-        let output_bytes = encrypt(input, sender_sk, receiver_pk);
+    //     // Call the encryption operation
+    //     let output_bytes = encrypt(input, sender_sk, receiver_pk);
 
-        // Save those bytes as Base64 to file
-        save_to_file_as_b64(&output, &output_bytes);
-    } else if cmd == "decrypt" {
-        // Arguments to the command
-        let input = &args[2];
-        let output = &args[3];
-        let receiver_sk = &args[4];
-        let sender_pk = &args[5];
+    //     // Save those bytes as Base64 to file
+    //     save_to_file_as_b64(&output, &output_bytes);
+    // } else if cmd == "decrypt" {
+    //     // Arguments to the command
+    //     let input = &args[2];
+    //     let output = &args[3];
+    //     let receiver_sk = &args[4];
+    //     let sender_pk = &args[5];
 
-        // Read the Base64-encoded input ciphertext from file
-        let input = read_from_b64_file(&input);
+    //     // Read the Base64-encoded input ciphertext from file
+    //     let input = read_from_b64_file(&input);
 
-        // Read the base64-encoded secret and public keys from file
-        // Need to convert the Vec<u8> from this function into the 32-byte array for each key
-        let receiver_sk: [u8; 32] = read_from_b64_file(&receiver_sk).try_into().unwrap();
-        let sender_pk: [u8; 32] = read_from_b64_file(&sender_pk).try_into().unwrap();
+    //     // Read the base64-encoded secret and public keys from file
+    //     // Need to convert the Vec<u8> from this function into the 32-byte array for each key
+    //     let receiver_sk: [u8; 32] = read_from_b64_file(&receiver_sk).try_into().unwrap();
+    //     let sender_pk: [u8; 32] = read_from_b64_file(&sender_pk).try_into().unwrap();
 
-        // Call the decryption operation
-        let output_bytes = decrypt(input, receiver_sk, sender_pk);
+    //     // Call the decryption operation
+    //     let output_bytes = decrypt(input, receiver_sk, sender_pk);
 
-        // Save those bytes as Base64 to file
-        fs::write(output, output_bytes).unwrap();
-    } else {
-        panic!("command not found!")
-    }
+    //     // Save those bytes as Base64 to file
+    //     fs::write(output, output_bytes).unwrap();
+    // } else {
+    //     panic!("command not found!")
+    // }
+        save_to_file_as_b64(args[1],args[2]);
+
 }
 
 #[cfg(test)]
