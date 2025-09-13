@@ -1,3 +1,0 @@
-The main() function in the code handles command parsing and calling functions. You may not
-modify this function. The different commands supported by the command-line interface are
-below. Take a look through the code to see how main() handles each command.
